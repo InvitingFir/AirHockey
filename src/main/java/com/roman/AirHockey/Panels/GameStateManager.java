@@ -1,4 +1,4 @@
-package com.roman.AirHockey.GamePanels;
+package com.roman.AirHockey.Panels;
 
 import java.awt.*;
 
@@ -14,7 +14,7 @@ public class GameStateManager {
 
     public GameStateManager(){
         this.panelArray = new GamePanel[NUM_OF_PANELS];
-        panelArray[MAINMENU] = new GameplayPanel(this);
+        panelArray[MAINMENU] = new GamePlayPanel(this);
     }
 
     public void update(){

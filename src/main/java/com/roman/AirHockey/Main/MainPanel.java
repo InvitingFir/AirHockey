@@ -1,7 +1,6 @@
 package com.roman.AirHockey.Main;
 
-import com.roman.AirHockey.GamePanels.GameStateManager;
-import com.roman.AirHockey.GamePanels.GameplayPanel;
+import com.roman.AirHockey.Panels.GameStateManager;
 
 import javax.swing.*;
 import java.awt.*;

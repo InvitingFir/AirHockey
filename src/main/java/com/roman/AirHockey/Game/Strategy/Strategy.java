@@ -1,10 +1,10 @@
-package com.roman.AirHockey.Strategy;
+package com.roman.AirHockey.Game.Strategy;
 
-import com.roman.AirHockey.FieldParts.Field;
-import com.roman.AirHockey.FieldParts.Gate;
+import com.roman.AirHockey.Game.Field;
+import com.roman.AirHockey.Game.Gate;
 import com.roman.AirHockey.Main.MainPanel;
-import com.roman.AirHockey.Player.Players.Bot;
-import com.roman.AirHockey.Player.Puck;
+import com.roman.AirHockey.Game.Player.Players.Bot;
+import com.roman.AirHockey.Game.Player.Puck;
 import com.roman.AirHockey.Util.Vector;
 
 public abstract class Strategy {
@@ -17,10 +17,12 @@ public abstract class Strategy {
     protected int targetY;
     protected double speed;
 
-    public Strategy(Puck puck, Bot admin){
+    public Strategy(Puck puck, Bot admin) {
         this.puck = puck;
         this.admin = admin;
-        protectionFactor = (double)(Gate.getCurrentSize())/ (double)((MainPanel.WIDTH-2*Field.BORDER_SIZE));
+        double a = Gate.LENGTH;
+        double b = MainPanel.WIDTH - 2 * Field.BORDER_SIZE;
+        protectionFactor = a / b;
         this.speed = admin.getSpeed();
     }
 

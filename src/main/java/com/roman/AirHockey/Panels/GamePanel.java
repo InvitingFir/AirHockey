@@ -1,4 +1,4 @@
-package com.roman.AirHockey.GamePanels;
+package com.roman.AirHockey.Panels;
 
 import java.awt.*;
 

@@ -1,20 +1,21 @@
-package com.roman.AirHockey.Player;
+package com.roman.AirHockey.Game.Player;
 
-import com.roman.AirHockey.FieldParts.Field;
-import com.roman.AirHockey.FieldParts.Gate;
-import com.roman.AirHockey.FieldParts.ScorePanel;
+import com.roman.AirHockey.Game.Field;
+import com.roman.AirHockey.Game.GameComponent;
+import com.roman.AirHockey.Game.Gate;
+import com.roman.AirHockey.Game.ScoreManager.ScoreManager;
 import com.roman.AirHockey.Main.MainPanel;
-import com.roman.AirHockey.Player.Players.PlayerPattern;
+import com.roman.AirHockey.Game.Player.Players.PlayerPattern;
 import com.roman.AirHockey.Util.Vector;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 
-public class Puck {
+public class Puck implements GameComponent {
     public static final double PUCK_ACCELERATION = 0.995;
     public static final int SPEED_LIMIT = 70;
-    public static final int BASIC_X = MainPanel.WIDTH/2;
-    public static final int START_Y = MainPanel.HEIGHT/2;
+    public static final int BASIC_X = MainPanel.WIDTH / 2;
+    public static final int START_Y = MainPanel.HEIGHT / 2;
 
     private int puckX;
     private int puckY;
@@ -25,38 +26,43 @@ public class Puck {
     private double puckAngle;
     private double puckSpeed;
     private int radius;
-    private Color puckColor;
+    private BufferedImage image;
 
-    private ArrayList<PlayerPattern> PlayerArray;
+    private PlayerPattern[] PlayerArray;
     private Gate[] gates;
 
-    public Puck(int radius, ArrayList<PlayerPattern> PlayerArray, Gate[] gates){
+    public Puck(PlayerPattern[] PlayerArray, Gate[] gates) {
         gameSetup();
-        this.radius = radius;
         this.PlayerArray = PlayerArray;
-        this.puckAngle = 15*Math.PI/8;
-        this.puckColor = Color.MAGENTA;
+        this.puckAngle = 15 * Math.PI / 8;
         this.gates = gates;
         lastCoordinatesUpdate();
     }
 
-    private void gameSetup(){
+    private void gameSetup() {
         this.puckX = BASIC_X;
         this.puckY = START_Y;
         this.puckSpeed = 0;
         lastCoordinatesUpdate();
     }
 
-    public void draw(Graphics2D g){
-        g.setColor(puckColor);
-        g.fillArc(puckX-radius, puckY-radius, 2*radius, 2*radius, 0, 360);
+    public void draw(Graphics2D g) {
+        g.drawImage(image, puckX - radius, puckY - radius, null);
     }
 
-    public void update(){
+    @Override
+    public void setTexture(BufferedImage image) {
+        this.image = image;
+        this.radius = image.getWidth() / 2;
+    }
+
+    public void update() {
         puckPositionUpdate();
         borderCollision();
-        for (Gate g: gates)goalCheck(g);
-        for (PlayerPattern p: PlayerArray) { playerCollision(p); }
+        for (Gate g : gates) goalCheck(g);
+        for (PlayerPattern p : PlayerArray) {
+            playerCollision(p);
+        }
     }
 
 
@@ -83,30 +89,27 @@ public class Puck {
     private void playerCollision(PlayerPattern player){
         Vector distance = new Vector(player.getX(), player.getY(), puckX, puckY);
         Vector puck = new Vector(lastX, lastY, puckX, puckY);
-        if(distance.getLength()<= PlayerPattern.RADIUS+radius) {
-            if((puckSpeed < player.getSpeed()) || (Vector.angleBetweenVectors(distance, puck) <= Math.PI/2)) {
+        if (distance.getLength() <= player.getRadius() + radius) {
+            if ((puckSpeed < player.getSpeed()) || (Vector.angleBetweenVectors(distance, puck) <= Math.PI / 2)) {
                 puckAngle = distance.getAngle();
-                puckSpeed +=player.getSpeed()%SPEED_LIMIT;
-            }
-            else {
+                puckSpeed += player.getSpeed() % SPEED_LIMIT;
+            } else {
                 puckAngle = Math.PI + 2 * distance.getAngle() - puckAngle;
                 puckSpeed = (puckSpeed + player.getSpeed()) % SPEED_LIMIT;
             }
-            puckX += Math.round((radius + PlayerPattern.RADIUS - distance.getLength() + 2) * Math.cos(puckAngle));
-            puckY += Math.round((radius + PlayerPattern.RADIUS - distance.getLength() + 2) * Math.sin(puckAngle));
+            puckX += Math.round((radius + player.getRadius() - distance.getLength() + 2) * Math.cos(puckAngle));
+            puckY += Math.round((radius + player.getRadius() - distance.getLength() + 2) * Math.sin(puckAngle));
             lastCoordinatesUpdate();
         }
     }
 
-    private boolean goalCheck(Gate gate){
-        if(this.puckX-radius > gate.getX1() && this.puckX+radius < gate.getX2()) {
+    private void goalCheck(Gate gate) {
+        if (this.puckX - radius > gate.getX1() && this.puckX + radius < gate.getX2()) {
             if (Math.abs(this.puckY - gate.getY()) <= Field.BORDER_SIZE + this.radius) {
-                ScorePanel.updateScore(gate.getOwner());
+                ScoreManager.updateScore(gate.getOwner());
                 gameSetup();
-                return false;
             }
         }
-        return true;
     }
 
     private void puckPositionUpdate(){
