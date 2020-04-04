@@ -6,16 +6,16 @@ import com.roman.AirHockey.Util.Vector;
 
 public class Player extends PlayerPattern {
 
-    public Player(){
-        super();
+    public Player(Side side) {
+        super(side);
         this.speed = 0;
     }
 
-    public void update(){
+    public void update() {
         int x = MainPanel.getMouseX();
         int y = MainPanel.getMouseY();
         if (x - radius >= Field.BORDER_SIZE && x + radius <= MainPanel.WIDTH - Field.BORDER_SIZE) {
-            if (this.playerSide == PlayerPattern.LOWER) lowerUpdate(x, y);
+            if (this.playerSide == Side.LOWER) lowerUpdate(x, y);
             else upperUpdate(x, y);
         }
 
@@ -36,6 +36,7 @@ public class Player extends PlayerPattern {
             this.y = y;
             this.x = x;
             this.speed = vector.getLength();
-        } else speed = 0;
+        } else
+            speed = 0;
     }
 }

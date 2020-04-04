@@ -1,7 +1,7 @@
 package com.roman.AirHockey.Game.Strategy;
 
 import com.roman.AirHockey.Game.Field;
-import com.roman.AirHockey.Game.Gate;
+import com.roman.AirHockey.Game.Player.Players.PlayerPattern;
 import com.roman.AirHockey.Main.MainPanel;
 import com.roman.AirHockey.Game.Player.Players.Bot;
 import com.roman.AirHockey.Game.Player.Puck;
@@ -15,15 +15,13 @@ public abstract class Strategy {
     protected Vector movement;
     protected int targetX;
     protected int targetY;
-    protected double speed;
 
     public Strategy(Puck puck, Bot admin) {
         this.puck = puck;
         this.admin = admin;
-        double a = Gate.LENGTH;
+        double a = PlayerPattern.Gate.LENGTH;
         double b = MainPanel.WIDTH - 2 * Field.BORDER_SIZE;
         protectionFactor = a / b;
-        this.speed = admin.getSpeed();
     }
 
     public abstract void update();
@@ -36,6 +34,7 @@ public abstract class Strategy {
     }
 
     protected void updatePosition(){
+        double speed = admin.getSpeed();
         int x = admin.getX();
         int y = admin.getY();
         movement = new Vector(x, y, targetX, targetY);

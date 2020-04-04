@@ -1,21 +1,17 @@
 package com.roman.AirHockey.Game;
 
 
-import java.awt.*;
+import com.roman.AirHockey.MainMenu.Background;
+
 import java.awt.image.BufferedImage;
 
-public class Field implements GameComponent {
+public class Field extends Background implements GameComponent {
     public static final int BORDER_SIZE = 15;
-    private BufferedImage background;
-
-    public void draw(Graphics2D g) {
-        g.drawImage(background, 0, 0, null);
-    }
 
     public void update() {
     }
 
     public void setTexture(BufferedImage image) {
-        this.background = image;
+        this.backgroundImage = image;
     }
 }

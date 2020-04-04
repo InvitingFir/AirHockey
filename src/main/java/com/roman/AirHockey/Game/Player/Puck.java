@@ -2,8 +2,7 @@ package com.roman.AirHockey.Game.Player;
 
 import com.roman.AirHockey.Game.Field;
 import com.roman.AirHockey.Game.GameComponent;
-import com.roman.AirHockey.Game.Gate;
-import com.roman.AirHockey.Game.ScoreManager.ScoreManager;
+import com.roman.AirHockey.Game.Score;
 import com.roman.AirHockey.Main.MainPanel;
 import com.roman.AirHockey.Game.Player.Players.PlayerPattern;
 import com.roman.AirHockey.Util.Vector;
@@ -12,10 +11,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Puck implements GameComponent {
-    public static final double PUCK_ACCELERATION = 0.995;
-    public static final int SPEED_LIMIT = 70;
+    public static final double PUCK_ACCELERATION = 0.991;
+    public static final int SPEED_LIMIT = 60;
     public static final int BASIC_X = MainPanel.WIDTH / 2;
-    public static final int START_Y = MainPanel.HEIGHT / 2;
+    public static final int LOW_Y = 2 * MainPanel.HEIGHT / 3;
+    public static final int HIGH_Y = MainPanel.HEIGHT / 3;
 
     private int puckX;
     private int puckY;
@@ -29,20 +29,23 @@ public class Puck implements GameComponent {
     private BufferedImage image;
 
     private PlayerPattern[] PlayerArray;
-    private Gate[] gates;
+    private Score score;
 
-    public Puck(PlayerPattern[] PlayerArray, Gate[] gates) {
-        gameSetup();
-        this.PlayerArray = PlayerArray;
-        this.puckAngle = 15 * Math.PI / 8;
-        this.gates = gates;
+    public Puck(PlayerPattern[] playerArray, Score score) {
+        gameSetup(PlayerPattern.Side.LOWER);
+        this.PlayerArray = playerArray;
+        this.score = score;
         lastCoordinatesUpdate();
     }
 
-    private void gameSetup() {
+    private void gameSetup(PlayerPattern.Side startY) {
         this.puckX = BASIC_X;
-        this.puckY = START_Y;
         this.puckSpeed = 0;
+        if (startY == PlayerPattern.Side.UPPER) {
+            this.puckY = HIGH_Y;
+        } else if (startY == PlayerPattern.Side.LOWER) {
+            this.puckY = LOW_Y;
+        }
         lastCoordinatesUpdate();
     }
 
@@ -59,9 +62,9 @@ public class Puck implements GameComponent {
     public void update() {
         puckPositionUpdate();
         borderCollision();
-        for (Gate g : gates) goalCheck(g);
         for (PlayerPattern p : PlayerArray) {
             playerCollision(p);
+            goalCheck(p);
         }
     }
 
@@ -92,28 +95,31 @@ public class Puck implements GameComponent {
         if (distance.getLength() <= player.getRadius() + radius) {
             if ((puckSpeed < player.getSpeed()) || (Vector.angleBetweenVectors(distance, puck) <= Math.PI / 2)) {
                 puckAngle = distance.getAngle();
-                puckSpeed += player.getSpeed() % SPEED_LIMIT;
+                if (puckSpeed < player.getSpeed())
+                    puckSpeed = player.getSpeed();
             } else {
                 puckAngle = Math.PI + 2 * distance.getAngle() - puckAngle;
-                puckSpeed = (puckSpeed + player.getSpeed()) % SPEED_LIMIT;
+                puckSpeed += player.getSpeed();
             }
+            if (puckSpeed > SPEED_LIMIT) puckSpeed = SPEED_LIMIT;
             puckX += Math.round((radius + player.getRadius() - distance.getLength() + 2) * Math.cos(puckAngle));
             puckY += Math.round((radius + player.getRadius() - distance.getLength() + 2) * Math.sin(puckAngle));
             lastCoordinatesUpdate();
         }
     }
 
-    private void goalCheck(Gate gate) {
+    private void goalCheck(PlayerPattern p) {
+        PlayerPattern.Gate gate = p.getGate();
         if (this.puckX - radius > gate.getX1() && this.puckX + radius < gate.getX2()) {
             if (Math.abs(this.puckY - gate.getY()) <= Field.BORDER_SIZE + this.radius) {
-                ScoreManager.updateScore(gate.getOwner());
-                gameSetup();
+                score.updateScore(p.getPlayerSide());
+                gameSetup(p.getPlayerSide());
             }
         }
     }
 
-    private void puckPositionUpdate(){
-        puckSpeed*=PUCK_ACCELERATION;
+    private void puckPositionUpdate() {
+        puckSpeed *= PUCK_ACCELERATION;
         deltaX += Math.cos(puckAngle)*puckSpeed;
         deltaY += Math.sin(puckAngle)*puckSpeed;
         puckX = (int)(Math.round(lastX + deltaX));
@@ -133,5 +139,12 @@ public class Puck implements GameComponent {
 
     public int getY() {
         return puckY;
+    }
+
+    public void setPlayer(PlayerPattern.Side side, PlayerPattern player) {
+        for (PlayerPattern p : PlayerArray) {
+            if (p.getPlayerSide() == side) p = player;
+            break;
+        }
     }
 }
