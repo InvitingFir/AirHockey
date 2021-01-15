@@ -32,7 +32,6 @@ public class MainPanel extends JPanel implements Runnable, MouseMotionListener, 
 
     public MainPanel() {
         thread = new Thread(this);
-        gsm = new GameStateManager();
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         imageGraphics = (Graphics2D) image.getGraphics();
         setPreferredSize(new Dimension(Main.WIDTH, Main.HEIGHT));
@@ -41,6 +40,9 @@ public class MainPanel extends JPanel implements Runnable, MouseMotionListener, 
         this.addMouseListener(this);
         setFocusable(true);
         requestFocus();
+    }
+
+    public void startThread() {
         thread.start();
     }
 
@@ -128,5 +130,9 @@ public class MainPanel extends JPanel implements Runnable, MouseMotionListener, 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
         onScreen = false;
+    }
+
+    public void setGsm(GameStateManager gsm) {
+        this.gsm = gsm;
     }
 }

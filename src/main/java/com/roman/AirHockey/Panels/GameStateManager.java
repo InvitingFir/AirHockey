@@ -1,10 +1,7 @@
 package com.roman.AirHockey.Panels;
 
-import com.roman.AirHockey.Game.GamePlayPanel;
-import com.roman.AirHockey.MainMenu.MainMenuPanel;
-import com.roman.AirHockey.Settings.SettingsPanel;
-
 import java.awt.*;
+import java.util.List;
 
 public class GameStateManager {
     public static final int NUM_OF_PANELS = 3;
@@ -13,26 +10,23 @@ public class GameStateManager {
     public static final int SETTINGS = 2;
     public static final int PAUSE = 3;
 
-    private GamePanel[] panelArray;
+    private List<GamePanel> panelArray;
     private int currentPanel = MAIN_MENU;
 
-    public GameStateManager() {
-        this.panelArray = new GamePanel[NUM_OF_PANELS];
-        panelArray[GAME_PLAY] = new GamePlayPanel(this);
-        panelArray[MAIN_MENU] = new MainMenuPanel(this);
-        panelArray[SETTINGS] = new SettingsPanel(this);
+    public void setPanelArray(List<GamePanel> panelArray) {
+        this.panelArray = panelArray;
     }
 
     public void update() {
-        panelArray[currentPanel].update();
+        panelArray.get(currentPanel).update();
     }
 
     public void redraw(Graphics2D g) {
-        panelArray[currentPanel].redraw(g);
+        panelArray.get(currentPanel).redraw(g);
     }
 
     public void updateGamePlayPanel(GamePanel gamePlayPanel) {
-        panelArray[GAME_PLAY] = gamePlayPanel;
+        panelArray.set(GAME_PLAY, gamePlayPanel);
     }
 
     public void swapPanel(int newPanel) {
@@ -40,6 +34,6 @@ public class GameStateManager {
     }
 
     public void keyPressed(int key) {
-        panelArray[currentPanel].keyPressed(key);
+        panelArray.get(currentPanel).keyPressed(key);
     }
 }

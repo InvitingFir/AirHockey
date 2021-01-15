@@ -1,10 +1,13 @@
 package com.roman.AirHockey.Game;
 
-import com.roman.AirHockey.Game.Managers.*;
-import com.roman.AirHockey.Game.Player.Players.*;
+import com.roman.AirHockey.Game.Managers.TextureManager;
+import com.roman.AirHockey.Game.Player.Players.Bot;
+import com.roman.AirHockey.Game.Player.Players.Player;
+import com.roman.AirHockey.Game.Player.Players.PlayerPattern;
 import com.roman.AirHockey.Game.Player.Puck;
 import com.roman.AirHockey.Main.MainPanel;
-import com.roman.AirHockey.Panels.*;
+import com.roman.AirHockey.Panels.GamePanel;
+import com.roman.AirHockey.Panels.GameStateManager;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -35,7 +38,6 @@ public class GamePlayPanel implements GamePanel {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        init();
     }
 
     private void init() {

@@ -1,6 +1,6 @@
 package com.roman.AirHockey.Main;
 
-import javax.swing.*;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class Main {
     public static final int WIDTH = 400;
@@ -8,12 +8,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Air Hockey");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setResizable(false);
-        frame.getContentPane().add(new MainPanel());
-        frame.setSize(WIDTH, HEIGHT);
-        frame.pack();
-        frame.setVisible(true);
+        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("springConfig.xml");
+        context.getBean("mainFrameBean");
     }
 }

@@ -3,7 +3,10 @@ package com.roman.AirHockey.Settings;
 import com.roman.AirHockey.Game.GamePlayPanel;
 import com.roman.AirHockey.Panels.GamePanel;
 import com.roman.AirHockey.Panels.GameStateManager;
-import com.roman.AirHockey.Settings.SettingsItems.*;
+import com.roman.AirHockey.Settings.SettingsItems.CarouselBox;
+import com.roman.AirHockey.Settings.SettingsItems.OptionBox;
+import com.roman.AirHockey.Settings.SettingsItems.SliderBox;
+import org.springframework.context.ApplicationContext;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -17,6 +20,8 @@ public class SettingsPanel implements GamePanel {
 
     private OptionBox[] options;
     private GameStateManager gsm;
+
+    private ApplicationContext context;
 
     public SettingsPanel(GameStateManager gsm) {
         this.gsm = gsm;
@@ -34,7 +39,7 @@ public class SettingsPanel implements GamePanel {
     }
 
     private GamePlayPanel saveSettings() { //TODO
-        GamePlayPanel gpp = new GamePlayPanel(gsm);
+        GamePlayPanel gpp = (GamePlayPanel) context.getBean("gamePlayPanelBean");
         gpp.setBotSpeed((int) options[LEVEL].getChoice());
         //gpp.updateTextures((String)options[TEXTURES].getChoice());
         return gpp;
